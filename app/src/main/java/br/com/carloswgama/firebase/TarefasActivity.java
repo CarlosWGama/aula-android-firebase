@@ -2,6 +2,7 @@ package br.com.carloswgama.firebase;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +55,24 @@ public class TarefasActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        final FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+        UserProfileChangeRequest novosDados = new UserProfileChangeRequest.Builder()
+                .setDisplayName("Carlos")
+                .build();
+
+        usuario.updateProfile(novosDados)
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            usuario.reload();
+                            Toast.makeText(TarefasActivity.this, usuario.getDisplayName(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        getSupportActionBar().setSubtitle(usuario.getEmail());
     }
 
     private void atualizaLista() {
@@ -74,6 +100,7 @@ public class TarefasActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TarefasCadastroActivity.class);
             startActivity(intent);
         } else if (item.getItemId() == R.id.menu_sair) {
+            FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
