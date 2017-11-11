@@ -1,6 +1,8 @@
 package br.com.carloswgama.firebase;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,9 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import br.com.carloswgama.firebase.Model.Tarefa;
+import br.com.carloswgama.firebase.Util.FotoHelper;
 
 public class TarefasCadastroActivity extends AppCompatActivity {
 
+    private final int ABRIR_CAMERA = 1;
     private Tarefa tarefa;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +27,40 @@ public class TarefasCadastroActivity extends AppCompatActivity {
     }
 
     public void btTirarFoto(View v) {
-        tarefa.setImagem("aaa");
-        ImageView imageViewFoto = (ImageView) findViewById(R.id.cadastro_tarefa_iv_foto);
-        imageViewFoto.setImageResource(R.drawable.ic_camera2);
+//        tarefa.setImagem("aaa");
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, ABRIR_CAMERA);
     }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ABRIR_CAMERA) {
+            if (resultCode == RESULT_OK) {
+                Bundle extras = data.getExtras();
+                if (extras != null) {
+                    Bitmap fotoTirada = (Bitmap) extras.get("data");
+
+                    tarefa.setImagem(FotoHelper.BitmapToString(fotoTirada));
+
+                    ImageView imageViewFoto = (ImageView)
+                            findViewById(R.id.cadastro_tarefa_iv_foto);
+
+                    imageViewFoto.setImageBitmap(tarefa.getImagemBitmap());
+                }
+            }
+        }
+
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+
+
+
 
     public void btCadastrar(View v) {
         EditText texto = (EditText) findViewById(R.id.cadastro_tarefa_et_titulo);
