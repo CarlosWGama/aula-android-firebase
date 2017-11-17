@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import br.com.carloswgama.firebase.Model.Tarefa;
 import br.com.carloswgama.firebase.Util.FotoHelper;
 
@@ -27,7 +30,7 @@ public class TarefasCadastroActivity extends AppCompatActivity {
     }
 
     public void btTirarFoto(View v) {
-//        tarefa.setImagem("aaa");
+        tarefa.setImagem("aaa");
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, ABRIR_CAMERA);
@@ -53,7 +56,6 @@ public class TarefasCadastroActivity extends AppCompatActivity {
             }
         }
 
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -69,6 +71,12 @@ public class TarefasCadastroActivity extends AppCompatActivity {
         else if (tarefa.getImagem().equals(""))
             Toast.makeText(this, "Tire uma foto", Toast.LENGTH_SHORT).show();
         else {
+            FirebaseDatabase banco = FirebaseDatabase.getInstance();
+            DatabaseReference referencia = banco.getReference("tarefas");
+            String ID = referencia.push().getKey();
+            tarefa.setId(ID);
+            tarefa.setTitulo(texto.getText().toString());
+            referencia.child(ID).setValue(tarefa);
             Toast.makeText(this, "Cadastrado com sucesso", Toast.LENGTH_SHORT).show();
             finish();
         }

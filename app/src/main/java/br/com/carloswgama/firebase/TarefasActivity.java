@@ -21,6 +21,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +43,8 @@ public class TarefasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tarefas);
 
+
         tarefas = new ArrayList<Tarefa>();
-        tarefas.add(new Tarefa("Tarefa 1", "imagem"));
-        tarefas.add(new Tarefa("Tarefa 2", "imagem"));
-        tarefas.add(new Tarefa("Tarefa 3", "imagem"));
 
         lista = (ListView) findViewById(R.id.tarefas_lv_lista);
 
@@ -57,22 +60,29 @@ public class TarefasActivity extends AppCompatActivity {
         });
 
         final FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
-        UserProfileChangeRequest novosDados = new UserProfileChangeRequest.Builder()
-                .setDisplayName("Carlos")
-                .build();
-
-        usuario.updateProfile(novosDados)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            usuario.reload();
-                            Toast.makeText(TarefasActivity.this, usuario.getDisplayName(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
         getSupportActionBar().setSubtitle(usuario.getEmail());
+
+        FirebaseDatabase banco = FirebaseDatabase.getInstance();
+        DatabaseReference referencia = banco.getReference("tarefas");
+        referencia.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                tarefas = new ArrayList<Tarefa>();
+
+                for (DataSnapshot dados: dataSnapshot.getChildren()) {
+                    Tarefa tarefa = dados.getValue(Tarefa.class);
+                    tarefas.add(tarefa);
+                    atualizaLista();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
     private void atualizaLista() {

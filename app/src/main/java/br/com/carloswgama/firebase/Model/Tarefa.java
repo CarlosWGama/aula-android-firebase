@@ -2,6 +2,8 @@ package br.com.carloswgama.firebase.Model;
 
 import android.graphics.Bitmap;
 
+import com.google.firebase.database.Exclude;
+
 import br.com.carloswgama.firebase.Util.FotoHelper;
 
 public class Tarefa {
@@ -36,7 +38,7 @@ public class Tarefa {
     public void setImagem(String imagem) { this.imagem = imagem; }
 
     public String getImagem() { return this.imagem; }
-
+    @Exclude
     public Bitmap getImagemBitmap() {
         return FotoHelper.StringToBitmap(this.imagem);
     }
