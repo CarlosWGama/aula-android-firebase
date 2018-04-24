@@ -14,6 +14,9 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +27,16 @@ public class TarefasActivity extends AppCompatActivity {
 
     private ListView lista;
     private ArrayList<Tarefa> tarefas;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tarefas);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser usuario = firebaseAuth.getCurrentUser();
+        getSupportActionBar().setSubtitle(usuario.getEmail());
 
         tarefas = new ArrayList<Tarefa>();
         tarefas.add(new Tarefa("Tarefa 1", "imagem"));
@@ -74,10 +82,10 @@ public class TarefasActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TarefasCadastroActivity.class);
             startActivity(intent);
         } else if (item.getItemId() == R.id.menu_sair) {
+            firebaseAuth.signOut();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

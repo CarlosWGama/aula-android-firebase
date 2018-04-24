@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "731745265531",
+    "firebase_url": "https://aula-firebase-f1023.firebaseio.com",
+    "project_id": "aula-firebase-f1023",
+    "storage_bucket": "aula-firebase-f1023.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731745265531:android:79f7ac08c6fd185f",
+        "android_client_info": {
+          "package_name": "br.com.carloswgama.firebase2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "731745265531-lda5abf0pp57982lc1k6r8arsqp1hc6a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.carloswgama.firebase2",
+            "certificate_hash": "6f568b2287606929ec87c7a335ade6c02d53c475"
+          }
+        },
+        {
+          "client_id": "731745265531-624avmha8039djp6d45ektrfsu56ei8p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjwTLBmkNzwlf3wsY0FTYNzo2kwQy33MA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "731745265531-624avmha8039djp6d45ektrfsu56ei8p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
