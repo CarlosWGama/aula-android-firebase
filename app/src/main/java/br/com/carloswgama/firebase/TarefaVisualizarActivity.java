@@ -1,5 +1,9 @@
 package br.com.carloswgama.firebase;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -37,7 +41,17 @@ public class TarefaVisualizarActivity extends AppCompatActivity {
     }
 
     public void btTirarFoto(View v) {
-        imageViewFoto.setImageResource(R.drawable.ic_camera2);
+        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Bitmap foto = (Bitmap) data.getExtras().get("data");
+            tarefa.setImagemBitmap(foto);
+            imageViewFoto.setImageBitmap(tarefa.getImagemBitmap());
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void btAtualizar(View v) {

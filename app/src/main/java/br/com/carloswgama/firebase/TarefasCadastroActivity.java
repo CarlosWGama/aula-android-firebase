@@ -1,13 +1,18 @@
 package br.com.carloswgama.firebase;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
 
 import br.com.carloswgama.firebase.Model.Tarefa;
 
@@ -23,9 +28,23 @@ public class TarefasCadastroActivity extends AppCompatActivity {
     }
 
     public void btTirarFoto(View v) {
-        tarefa.setImagem("aaa");
-        ImageView imageViewFoto = (ImageView) findViewById(R.id.cadastro_tarefa_iv_foto);
-        imageViewFoto.setImageResource(R.drawable.ic_camera2);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) { //Foi a operação que realizamos
+            if (resultCode == RESULT_OK) { //Foi o código que pedimos
+
+                Bitmap foto = (Bitmap) data.getExtras().get("data");
+                tarefa.setImagemBitmap(foto);
+
+                ImageView imageViewFoto = findViewById(R.id.cadastro_tarefa_iv_foto);
+                imageViewFoto.setImageBitmap(tarefa.getImagemBitmap());
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void btCadastrar(View v) {
