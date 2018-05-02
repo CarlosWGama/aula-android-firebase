@@ -13,9 +13,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,22 +32,13 @@ import br.com.carloswgama.firebase.Util.TarefasAdapter;
 public class TarefasActivity extends AppCompatActivity {
 
     private ListView lista;
-    private ArrayList<Tarefa> tarefas;
+    private ArrayList<Tarefa> tarefas = new ArrayList<Tarefa>();
     private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tarefas);
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser usuario = firebaseAuth.getCurrentUser();
-        getSupportActionBar().setSubtitle(usuario.getEmail());
-
-        tarefas = new ArrayList<Tarefa>();
-        tarefas.add(new Tarefa("Tarefa 1", "imagem"));
-        tarefas.add(new Tarefa("Tarefa 2", "imagem"));
-        tarefas.add(new Tarefa("Tarefa 3", "imagem"));
 
         lista = (ListView) findViewById(R.id.tarefas_lv_lista);
 
@@ -58,8 +55,25 @@ public class TarefasActivity extends AppCompatActivity {
     }
 
     private void atualizaLista() {
-        TarefasAdapter adapter = new TarefasAdapter(this, tarefas);
-        lista.setAdapter(adapter);
+
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("tarefas/"+userID);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                tarefas = new ArrayList<Tarefa>();
+                for (DataSnapshot dados: dataSnapshot.getChildren())
+                    tarefas.add(dados.getValue(Tarefa.class));
+
+                TarefasAdapter adapter = new TarefasAdapter(TarefasActivity.this, tarefas);
+                lista.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

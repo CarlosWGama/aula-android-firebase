@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.ByteArrayOutputStream;
 
 import br.com.carloswgama.firebase.Model.Tarefa;
@@ -54,8 +58,19 @@ public class TarefasCadastroActivity extends AppCompatActivity {
         else if (tarefa.getImagem().equals(""))
             Toast.makeText(this, "Tire uma foto", Toast.LENGTH_SHORT).show();
         else {
+
+
+            String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("tarefas/"+userID);
+            String id = reference.push().getKey();
+            tarefa.setTitulo(texto.getText().toString());
+            tarefa.setId(id);
+            reference.child(id).setValue(tarefa);
+
             Toast.makeText(this, "Cadastrado com sucesso", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 }
+
+
